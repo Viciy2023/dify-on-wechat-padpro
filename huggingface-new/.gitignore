@@ -1,0 +1,9 @@
+# 不推送到 HF Space 的文件
+volcengine-proxy/
+构建日志*.md
+启动日志.md
+任务派发.md
+日志.md
+Dockerfile备份
+entrypoint备份.sh
+openclaw备份.json
