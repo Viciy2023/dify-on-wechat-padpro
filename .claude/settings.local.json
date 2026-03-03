@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add huggingface-new/entrypoint.sh huggingface-new/openclaw.json)",
+      "Bash(docker exec wechatpadpro ls -R /app)",
+      "Bash(openclaw --help)",
+      "Bash(openclaw plugins --help)",
+      "Bash(npm view @types/qrcode-terminal versions)",
+      "Bash(git commit -m \"feat: update agent configurations, character prompts and skills\")",
+      "Bash(git push origin main)",
+      "Bash(git -C \"f:/APK/openclaw-main/huggingface-new\" status)",
+      "Bash(git -C \"f:/APK/openclaw-main/huggingface-new\" branch --show-current)",
+      "Bash(git -C \"f:/APK/openclaw-main/huggingface-new\" status --short)",
+      "Bash(git -C \"f:/APK/openclaw-main/huggingface-new\" add .)",
+      "Bash(git -C \"f:/APK/openclaw-main/huggingface-new\" commit -m \"update: sync entrypoint.sh and openclaw.json\")",
+      "Bash(git -C \"f:/APK/openclaw-main/huggingface-new\" push origin main)",
+      "Bash(git add huggingface-new/ task-dispatch.md 整合方案.md)",
+      "Bash(git commit -m \"feat: sync huggingface configurations and add integration plan\")",
+      "Bash(git pull --rebase origin main)",
+      "Bash(git add -u)",
+      "Bash(git add \"整合方案.md\")",
+      "Bash(git commit -m \"feat: sync configurations and add integration plan\")",
+      "Bash(git add .)",
+      "Bash(git -c core.editor=true rebase --continue)"
+    ]
+  }
+}
