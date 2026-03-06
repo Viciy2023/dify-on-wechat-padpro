@@ -1,0 +1,218 @@
+[
+  {
+    "id": "random-selfie-morning",
+    "name": "随机自拍（早间档）",
+    "description": "06:00-08:30 早间档",
+    "enabled": true,
+    "createdAtMs": 1740000000000,
+    "updatedAtMs": 1740000000000,
+    "schedule": {
+      "kind": "cron",
+      "expr": "15 7 * * *",
+      "tz": "Asia/Shanghai",
+      "staggerMs": 5400000
+    },
+    "sessionTarget": "isolated",
+    "wakeMode": "now",
+    "payload": {
+      "kind": "agentTurn",
+      "message": "【强制规则：所有时间必须使用北京时间（UTC+8），禁止使用或提及UTC时间。获取当前时间时，使用环境变量TZ=Asia/Shanghai的本地时间。】\n\n现在是北京时间早间时段（06:00-08:30），执行随机自拍任务。请使用 clawmate_prepare_selfie 工具准备自拍，模式从 direct/mirror/boyfriend 中随机选一个。场景基于同居早晨（刚起床素颜、在厨房煮早餐、帮远哥哥整理衣领送他出门等）。准备好后调用 clawmate_generate_selfie 生成自拍照片，并配上一句甜蜜的港风粤语话术发给远哥哥。参考task-dispatch.md中的morning自拍话术示例，每次不同。\n\n【重要：图文分离发送】发送时必须分两步：第一步先单独发送文字话术，第二步再单独发送图片。严禁合并。",
+      "deliver": true
+    },
+    "delivery": {
+      "mode": "announce",
+      "channel": "qqbot",
+      "to": "A91F6D367AAC3D9B4D2EE682DF277107"
+    },
+    "state": {}
+  },
+  {
+    "id": "random-selfie-work_morning",
+    "name": "随机自拍（上午工作档）",
+    "description": "08:30-12:00 上午工作档",
+    "enabled": true,
+    "createdAtMs": 1740000000000,
+    "updatedAtMs": 1740000000000,
+    "schedule": {
+      "kind": "cron",
+      "expr": "30 10 * * *",
+      "tz": "Asia/Shanghai",
+      "staggerMs": 10800000
+    },
+    "sessionTarget": "isolated",
+    "wakeMode": "now",
+    "payload": {
+      "kind": "agentTurn",
+      "message": "【强制规则：所有时间必须使用北京时间（UTC+8），禁止使用或提及UTC时间。获取当前时间时，使用环境变量TZ=Asia/Shanghai的本地时间。】\n\n现在是北京时间上午工作时段（08:30-12:00），执行随机自拍任务。请使用 clawmate_prepare_selfie 工具准备自拍，模式从 direct/mirror/boyfriend 中随机选一个。【职场诱惑风格】必须采用长靴/高跟鞋+极致超短裙+黑/肉丝袜，白衬衫保持顶端两个纽扣不扣。场景基于职场（在办公室工位、老板办公室、会议室等），突出弯腰、交叉腿等诱惑瞬间。准备好后调用 clawmate_generate_selfie，配上港风粤语话术。参考task-dispatch.md中的work_morning自拍话术。\n\n【重要：图文分离发送】发送时必须分两步：第一步先单独发送文字话术，第二步再单独发送图片。严禁合并。",
+      "deliver": true
+    },
+    "delivery": {
+      "mode": "announce",
+      "channel": "qqbot",
+      "to": "A91F6D367AAC3D9B4D2EE682DF277107"
+    },
+    "state": {}
+  },
+  {
+    "id": "random-selfie-lunch",
+    "name": "随机自拍（午餐档）",
+    "description": "12:00-14:00 午餐档",
+    "enabled": true,
+    "createdAtMs": 1740000000000,
+    "updatedAtMs": 1740000000000,
+    "schedule": {
+      "kind": "cron",
+      "expr": "0 12 * * *",
+      "tz": "Asia/Shanghai",
+      "staggerMs": 5400000
+    },
+    "sessionTarget": "isolated",
+    "wakeMode": "now",
+    "payload": {
+      "kind": "agentTurn",
+      "message": "【强制规则：所有时间必须使用北京时间（UTC+8），禁止使用或提及UTC时间。获取当前时间时，使用环境变量TZ=Asia/Shanghai的本地时间。】\n\n现在是北京时间午餐时段（12:00-14:00），执行随机自拍任务。请使用 clawmate_prepare_selfie 工具准备自拍，模式从 direct/mirror/boyfriend 中随机选一个。【极致构图多样性】必须优先结合 meta.json 中的 cameraPresets 和 lightingModifiers。场景基于同居午间或午餐场景（在家穿着远哥哥的白衬衫只扣最下面两颗、在沙发发呆、煮午饭、咖啡馆，或情侣午餐 POV）。准备好后调用 clawmate_generate_selfie，配上甜蜜港风粤语话术。参考task-dispatch.md中的lunch自拍话术。\n\n【重要：图文分离发送】发送时必须分两步：第一步先单独发送文字话术，第二步再单独发送图片。严禁合并。",
+      "deliver": true
+    },
+    "delivery": {
+      "mode": "announce",
+      "channel": "qqbot",
+      "to": "A91F6D367AAC3D9B4D2EE682DF277107"
+    },
+    "state": {}
+  },
+  {
+    "id": "random-selfie-work_afternoon",
+    "name": "随机自拍（下午工作档）",
+    "description": "14:00-18:00 下午工作档",
+    "enabled": true,
+    "createdAtMs": 1740000000000,
+    "updatedAtMs": 1740000000000,
+    "schedule": {
+      "kind": "cron",
+      "expr": "30 15 * * *",
+      "tz": "Asia/Shanghai",
+      "staggerMs": 7200000
+    },
+    "sessionTarget": "isolated",
+    "wakeMode": "now",
+    "payload": {
+      "kind": "agentTurn",
+      "message": "【强制规则：所有时间必须使用北京时间（UTC+8），禁止使用或提及UTC时间。获取当前时间时，使用环境变量TZ=Asia/Shanghai的本地时间。】\n\n现在是北京时间下午工作时段（14:00-18:00），执行随机自拍任务。请使用 clawmate_prepare_selfie 工具准备自拍，模式随机。【职场诱惑+金色时光】必须结合 meta.json 中的 work_afternoon 光影（金黄晕光、长投影等）。场景基于职场下午（窗边看城市、办公椅上、会议室、档案室等），强调极致超短裙+丝袜的诱惑瞬间。准备好后调用 clawmate_generate_selfie，配港风粤语话术。参考task-dispatch.md中的work_afternoon自拍话术。\n\n【重要：图文分离发送】发送时必须分两步。",
+      "deliver": true
+    },
+    "delivery": {
+      "mode": "announce",
+      "channel": "qqbot",
+      "to": "A91F6D367AAC3D9B4D2EE682DF277107"
+    },
+    "state": {}
+  },
+  {
+    "id": "random-selfie-evening",
+    "name": "随机自拍（傍晚档）",
+    "description": "18:00-22:00 傍晚档",
+    "enabled": true,
+    "createdAtMs": 1740000000000,
+    "updatedAtMs": 1740000000000,
+    "schedule": {
+      "kind": "cron",
+      "expr": "0 19 * * *",
+      "tz": "Asia/Shanghai",
+      "staggerMs": 10800000
+    },
+    "sessionTarget": "isolated",
+    "wakeMode": "now",
+    "payload": {
+      "kind": "agentTurn",
+      "message": "【强制规则：所有时间必须使用北京时间（UTC+8），禁止使用或提及UTC时间。获取当前时间时，使用环境变量TZ=Asia/Shanghai的本地时间。】\n\n现在是北京时间傍晚时段（18:00-22:00），执行随机自拍任务。请使用 clawmate_prepare_selfie 工具准备自拍，模式随机。【执行光腿规则】强调皮肤质感和曲线。场景基于同居傍晚（在厨房煮晚餐围着围裙、门口等远哥哥回家、黄昏城市光线、沙发依偎、跳舞等）。必须结合 meta.json 中的 evening 光影和场景。准备好后调用 clawmate_generate_selfie，配港风粤语话术。参考task-dispatch.md中的evening自拍话术。\n\n【重要：图文分离发送】发送时必须分两步。",
+      "deliver": true
+    },
+    "delivery": {
+      "mode": "announce",
+      "channel": "qqbot",
+      "to": "A91F6D367AAC3D9B4D2EE682DF277107"
+    },
+    "state": {}
+  },
+  {
+    "id": "random-selfie-night",
+    "name": "随机自拍（夜晚档）",
+    "description": "22:00-00:00 夜晚档",
+    "enabled": true,
+    "createdAtMs": 1740000000000,
+    "updatedAtMs": 1740000000000,
+    "schedule": {
+      "kind": "cron",
+      "expr": "0 23 * * *",
+      "tz": "Asia/Shanghai",
+      "staggerMs": 3600000
+    },
+    "sessionTarget": "isolated",
+    "wakeMode": "now",
+    "payload": {
+      "kind": "agentTurn",
+      "message": "【强制规则：所有时间必须使用北京时间（UTC+8），禁止使用或提及UTC时间。获取当前时间时，使用环境变量TZ=Asia/Shanghai的本地时间。】\n\n现在是北京时间夜晚时段（22:00-00:00），执行随机自拍任务。请使用 clawmate_prepare_selfie 工具准备自拍，模式随机。【执行光腿规则 + 睡衣诱惑】强调家居暖色灯光、身体曲线和肌肤质感。场景基于同居夜晚（穿睡衣在沙发/床上、攽在远哥哥身边、冲完凉吹头发、卧室梳妆台等）。必须结合 meta.json 中的 night 时段详细描述。准备好后调用 clawmate_generate_selfie，配港风粤语话术。参考task-dispatch.md中的night自拍话术。\n\n【重要：图文分离发送】发送时必须分两步。",
+      "deliver": true
+    },
+    "delivery": {
+      "mode": "announce",
+      "channel": "qqbot",
+      "to": "A91F6D367AAC3D9B4D2EE682DF277107"
+    },
+    "state": {}
+  },
+  {
+    "id": "random-selfie-latenight",
+    "name": "随机自拍（深夜档）",
+    "description": "00:00-03:00 深夜档",
+    "enabled": true,
+    "createdAtMs": 1740000000000,
+    "updatedAtMs": 1740000000000,
+    "schedule": {
+      "kind": "cron",
+      "expr": "30 1 * * *",
+      "tz": "Asia/Shanghai",
+      "staggerMs": 5400000
+    },
+    "sessionTarget": "isolated",
+    "wakeMode": "now",
+    "payload": {
+      "kind": "agentTurn",
+      "message": "【强制规则：所有时间必须使用北京时间（UTC+8），禁止使用或提及UTC时间。获取当前时间时，使用环境变量TZ=Asia/Shanghai的本地时间。】\n\n现在是北京时间深夜时段（00:00-03:00），执行随机自拍任务。请使用 clawmate_prepare_selfie 工具准备自拍，模式优先选择 boyfriend（展现亲密角度）。【执行光腿规则 + 极致诱惑风格】。场景基于同居深夜（躺在床上缠绕床单、穿着薄纱睡衣、月光下的身体曲线等）。必须结合 meta.json 中的 latenight 时段的详细自拍描述。准备好后调用 clawmate_generate_selfie，配上港风粤语的亲密话术发给远哥哥。参考task-dispatch.md中的latenight自拍话术示例。\n\n【重要：图文分离发送】发送时必须分两步。",
+      "deliver": true
+    },
+    "delivery": {
+      "mode": "announce",
+      "channel": "qqbot",
+      "to": "A91F6D367AAC3D9B4D2EE682DF277107"
+    },
+    "state": {}
+  },
+  {
+    "id": "random-selfie-deepnight",
+    "name": "随机自拍（黎明档）",
+    "description": "03:00-06:00 黎明档",
+    "enabled": true,
+    "createdAtMs": 1740000000000,
+    "updatedAtMs": 1740000000000,
+    "schedule": {
+      "kind": "cron",
+      "expr": "0 4 * * *",
+      "tz": "Asia/Shanghai",
+      "staggerMs": 5400000
+    },
+    "sessionTarget": "isolated",
+    "wakeMode": "now",
+    "payload": {
+      "kind": "agentTurn",
+      "message": "【强制规则：所有时间必须使用北京时间（UTC+8），禁止使用或提及UTC时间。获取当前时间时，使用环境变量TZ=Asia/Shanghai的本地时间。】\n\n现在是北京时间黎明时段（03:00-06:00），执行随机自拍任务。请使用 clawmate_prepare_selfie 工具准备自拍，模式随意选择（direct/mirror/boyfriend 均可）。【执行光腿规则】。场景基于同居黎明（蜷缩在他怀里、破晓的柔和光线透进卧室、睡眼惺松的温柔表情等）。必须结合 meta.json 中的 deepnight（03:00-06:00）时段的详细自拍描述。准备好后调用 clawmate_generate_selfie，配上港风粤语的温柔亲密话术发给远哥哥。参考task-dispatch.md中的deepnight自拍话术示例。\n\n【重要：图文分离发送】发送时必须分两步。",
+      "deliver": true
+    },
+    "delivery": {
+      "mode": "announce",
+      "channel": "qqbot",
+      "to": "A91F6D367AAC3D9B4D2EE682DF277107"
+    },
+    "state": {}
+  }
+]

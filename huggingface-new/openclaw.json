@@ -60,6 +60,7 @@
       "compaction": {
         "mode": "safeguard"
       },
+      "bootstrapMaxChars": 50000,
       "maxConcurrent": 4,
       "subagents": {
         "maxConcurrent": 8
@@ -119,6 +120,13 @@
               "baseUrl": "__HFOPQQ_GROK2API_BASE_URL__",
               "timeoutMs": 120000
             },
+            "grokkuake": {
+              "type": "openai-compatible",
+              "apiKey": "__HFOPKUAKE_GROK2API_KEY__",
+              "model": "grok-imagine-1.0-edit",
+              "baseUrl": "__HFOPKUAKE_GROK2API_BASE_URL__",
+              "timeoutMs": 120000
+            },
             "volcengine": {
               "type": "volcengine",
               "apiKey": "__VOLCENGINE_ARK_API_KEY__",
@@ -131,9 +139,9 @@
           },
           "proactiveSelfie": {
             "enabled": true,
-            "probability": 0.1
+            "probability": 0.5
           },
-          "fallback": { "enabled": true, "order": ["groksougou","grokqq", "grokcf", "volcengine"] },
+          "fallback": { "enabled": true, "order": ["groksougou","grokqq", "grokcf","grokkuake", "volcengine"] },
           "retry": { "maxAttempts": 4, "backoffMs": 1500 }
         }
       }

@@ -3,8 +3,8 @@
 ## Cron 任务清单（21个）
 
 ### 探活任务（2个）
-- `health-check-15`：每小时 :15 探活四个目标
-- `health-check-45`：每小时 :45 探活四个目标
+- `health-check-15`：每小时 :15探活五个目标
+- `health-check-45`：每小时 :45探活五个目标
 
 ### 天气简报（2个）
 - `weather-morning`：07:25 早间天气简报（梧州市）
@@ -27,13 +27,16 @@
 - `random-care-night-1`：21:15 夜间档1
 - `random-care-night-2`：22:30 夜间档2
 
-### 随机自拍（6个）
-- `random-selfie-morning`：07:30 早间档
-- `random-selfie-noon`：12:00 午间档
-- `random-selfie-afternoon`：15:30 下午档
-- `random-selfie-dusk`：18:00 傍晚档
-- `random-selfie-night-1`：20:40 夜间档1
-- `random-selfie-night-2`：22:10 睡前档
+### 随机自拍（8个）
+- `random-selfie-morning`：06:00-08:30 早间档
+- `random-selfie-work_morning`：08:30-12:00 上午工作档
+- `random-selfie-lunch`：12:00-14:00 午餐档
+- `random-selfie-work_afternoon`：14:00-18:00 下午工作档
+- `random-selfie-evening`：18:00-22:00 傍晚档
+- `random-selfie-night`：22:00-00:00 夜晚档
+- `random-selfie-latenight`：00:00-03:00 深夜档
+- `random-selfie-deepnight`：03:00-06:00 黎明档
+
 
 ## 投递规则
 
@@ -43,8 +46,11 @@
 
 1. 目标-openaiapi：https://daniellenguyen-cliproxyapi.hf.space/ 和 /v1/models
 2. 目标-HF小龙虾：https://emilyreed96989-ccv.hf.space
-3. 目标-grokapi：https://owenpowell-grok2api.hf.space/v1/models
-4. 目标-geminiapi：https://antigmanager-xxy.hf.space/health
+3. 目标-grokapisougou：https://owenpowell-grok2api.hf.space/v1/models
+4.目标-geminiapi：https://antigmanager-xxy.hf.space/health
+5. 目标-grokapiqq：https://qqrgok-qqrrok2api.hf.space/v1/models
+6. 目标-grokapikuake：https://huggingfacekkgrok2api-kuakegrok2api.hf.space/v1/models
+7. 目标-flaresolverr-cf刷新：https://flaresolverr-cjfb.onrender.com
 
 ## 探活判断标准
 

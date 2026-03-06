@@ -7,6 +7,72 @@ export TZ="Asia/Shanghai"
 CONFIG="/root/.openclaw/openclaw.json"
 IP_RECORD="/root/.openclaw/.last_outbound_ip"
 
+# ============================================================
+# 从 Supabase Storage（Private Bucket）下载所有敏感部署文件
+# DEPLOY_FILES_BASE_URL 通过 HF Secrets 注入，格式示例：
+# https://xxx.supabase.co/storage/v1/object/hf-deploy
+# SUPABASE_ANON_KEY 通过 HF Secrets 注入（Supabase anon/public key）
+# ============================================================
+
+download_file() {
+  local src="$1"
+  local dest="$2"
+  mkdir -p "$(dirname "$dest")"
+  if curl -fsSL \
+    -H "apikey: ${SUPABASE_ANON_KEY}" \
+    -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
+    "${DEPLOY_FILES_BASE_URL}/${src}" -o "$dest"; then
+    echo "✅ Downloaded: $src"
+  else
+    echo "❌ Failed: $src"
+    return 1
+  fi
+}
+
+if [ -n "$DEPLOY_FILES_BASE_URL" ] && [ -n "$SUPABASE_ANON_KEY" ]; then
+  echo "=== Downloading deploy files from Supabase ==="
+
+  FAIL_COUNT=0
+
+  # 配置文件
+  download_file "openclaw.json" "/root/.openclaw/openclaw.json" || ((FAIL_COUNT++))
+
+  # workspace 文件（角色设定、任务文档等）
+  download_file "SOUL.md" "/root/.openclaw/workspace/SOUL.md" || ((FAIL_COUNT++))
+  download_file "IDENTITY.md" "/root/.openclaw/workspace/IDENTITY.md" || ((FAIL_COUNT++))
+  download_file "USER.md" "/root/.openclaw/workspace/USER.md" || ((FAIL_COUNT++))
+  download_file "AGENTS.md" "/root/.openclaw/workspace/AGENTS.md" || ((FAIL_COUNT++))
+  download_file "TOOLS.md" "/root/.openclaw/workspace/TOOLS.md" || ((FAIL_COUNT++))
+  download_file "BOOTSTRAP.md" "/root/.openclaw/workspace/BOOTSTRAP.md" || ((FAIL_COUNT++))
+  download_file "MEMORY.md" "/root/.openclaw/workspace/MEMORY.md" || ((FAIL_COUNT++))
+  download_file "HEARTBEAT.md" "/root/.openclaw/workspace/HEARTBEAT.md" || ((FAIL_COUNT++))
+  download_file "WORKFLOW_AUTO.md" "/root/.openclaw/workspace/WORKFLOW_AUTO.md" || ((FAIL_COUNT++))
+  download_file "task-dispatch.md" "/root/.openclaw/workspace/task-dispatch.md" || ((FAIL_COUNT++))
+
+  # cron 任务配置
+  download_file "cron/jobs.json" "/root/.openclaw/cron/jobs.json" || ((FAIL_COUNT++))
+
+  # 角色资源（Maggie）
+  download_file "characters/maggie/character-prompt.md" "/root/.openclaw/extensions/clawmate-companion/skills/clawmate-companion/assets/characters/maggie/character-prompt.md" || ((FAIL_COUNT++))
+  download_file "characters/maggie/meta.json" "/root/.openclaw/extensions/clawmate-companion/skills/clawmate-companion/assets/characters/maggie/meta.json" || ((FAIL_COUNT++))
+  download_file "characters/maggie/README.md" "/root/.openclaw/extensions/clawmate-companion/skills/clawmate-companion/assets/characters/maggie/README.md" || ((FAIL_COUNT++))
+
+  # clawmate 补丁文件
+  download_file "patches/clawmate/types.ts" "/root/.openclaw/extensions/clawmate-companion/src/core/types.ts" || ((FAIL_COUNT++))
+  download_file "patches/clawmate/prepare.ts" "/root/.openclaw/extensions/clawmate-companion/src/core/prepare.ts" || ((FAIL_COUNT++))
+  download_file "patches/clawmate/plugin.ts" "/root/.openclaw/extensions/clawmate-companion/src/plugin.ts" || ((FAIL_COUNT++))
+  download_file "patches/clawmate/SKILL.md" "/root/.openclaw/extensions/clawmate-companion/skills/clawmate-companion/SKILL.md" || ((FAIL_COUNT++))
+  download_file "patches/clawmate/SKILL.zh.md" "/root/.openclaw/extensions/clawmate-companion/skills/clawmate-companion/SKILL.zh.md" || ((FAIL_COUNT++))
+
+  echo "=== Deploy files download complete (failures: $FAIL_COUNT) ==="
+
+  if [ "$FAIL_COUNT" -gt 0 ]; then
+    echo "⚠️ WARNING: $FAIL_COUNT file(s) failed to download, service may not work correctly"
+  fi
+else
+  echo "⚠️ DEPLOY_FILES_BASE_URL or SUPABASE_ANON_KEY not set, skipping Supabase file download"
+fi
+
 # Replace placeholders with secrets from environment
 sed -i "s|__CLIPROXY_BASE_URL__|${CLIPROXY_BASE_URL}|g" "$CONFIG"
 sed -i "s|__CLIPROXY_API_KEY__|${CLIPROXY_API_KEY}|g" "$CONFIG"

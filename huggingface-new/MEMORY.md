@@ -66,10 +66,13 @@
 
 ## 工作记忆
 
-- 探活目标1-openaiapi：daniellenguyen-cliproxyapi.hf.space（路径 / 和 /v1/models）
-- 探活目标2-HF小龙虾：emilyreed96989-ccv.hf.space
-- 探活目标3-grokapi：owenpowell-grok2api.hf.space/v1/models
-- 探活目标4-geminiapi：antigmanager-xxy.hf.space/health
+-探活目标1-openaiapi：daniellenguyen-cliproxyapi.hf.space（路径 / 和 /v1/models）
+-探活目标2-HF小龙虾：emilyreed96989-ccv.hf.space
+-探目标3-grokapisougou：owenpowell-grok2api.hf.space/v1/models
+-探活目标4-geminiapi：antigmanager-xxy.hf.space/health
+-探目标5-grokapiqq：qqrgok-qqrrok2api.hf.space/v1/models
+-探目标6-grokapikuake：huggingfacekkgrok2api-kuakegrok2api.hf.space/v1/models
+-探目标7-flaresolverr-cf刷新：flaresolverr-cjfb.onrender.com
 - 探活频率：每小时 :15 和 :45，一天48次
 - 探活汇报格式：必须列出每个目标名称+服务器地址+HTTP状态码
 - 天气城市：梧州市
