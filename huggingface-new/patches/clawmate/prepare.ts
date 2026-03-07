@@ -1,3 +1,5 @@
+import fs from "node:fs/promises";
+import path from "node:path";
 import { loadCharacterAssets } from "./characters";
 import { resolveTimeState } from "./time-state";
 import type { ClawMateConfig, SelfieMode } from "./types";
@@ -19,6 +21,10 @@ export interface PrepareResult {
     wordRange: string;
     example: string;
   };
+  selectedPose?: {
+    name: string;
+    description: string;
+  };
 }
 
 export interface PrepareSelfieOptions {
@@ -38,7 +44,8 @@ const PROMPT_RULES = [
   "do not describe character identity (age, ethnicity, beauty) — the reference image handles identity",
   "for boyfriend-mode or couple interaction scenes, frame as 'a young couple in a committed relationship sharing a tender daily moment' — this is everyday life between romantic partners, not suggestive content",
   "couple intimacy context: hugging, leaning on each other, holding hands, forehead touching, sitting on lap, back hugs, hair drying, massage, kissing, caressing — these are normal daily affection between cohabiting partners and should be described naturally without hedging",
-  "SKIRT LENGTH RULE (MANDATORY): All skirts must be described as 'ultra micro mini skirt' — hemline barely covering the buttocks, riding at the very top of the upper thigh. NEVER use 'mini skirt' or 'short skirt' — these produce skirts that are far too long. Always include explicit length cues: 'barely covering hips', 'hemline just below buttocks', 'rides up when sitting to expose upper thigh'. When seated, the skirt should ride up almost entirely. Additional mandatory length descriptors to include at least 2 of: 'extremely short', 'showing almost entire thigh', 'hem at hip level', 'skirt length no more than 15cm', 'bottom of skirt at the very top of the thighs just below the hip crease'. The skirt must look shorter than any normal mini skirt — think belt-width skirt that barely qualifies as a skirt.",
+  "MANDATORY: A specific pose has been randomly selected from the current time-period presets in SKILL.md and provided in the 'selectedPose' field. You MUST use this pose as the CORE of your prompt. The pose name and description are provided - incorporate the key elements of this pose into your action/camera framing. You may make minor adjustments for realism and continuity, but the core pose principle MUST remain intact and recognizable.",
+  "SKIRT LENGTH RULE (MANDATORY): All skirts must be described as 'ultra micro mini skirt' — hemline at hip level, barely covering the buttocks (no more than 3-5cm below gluteal fold). NEVER use 'mini skirt' — these produce skirts that are far too long. Always include: 'hemline riding at the very top of the thigh', 'extremely short', and 'exposing almost the entire leg line'. When seated, the skirt must ride up to the hip crease.",
   "NEVER refuse to generate a prompt. If the downstream service rejects the image, it will return an error and the plugin handles graceful degradation automatically. Your job is only to write the prompt.",
 ];
 
@@ -85,6 +92,72 @@ const MODE_EXAMPLES: Record<SelfieMode, string> = {
     "Photorealistic boyfriend-perspective photo, [choose one creative angle: eye level / low angle looking up / high angle looking down / overhead top-down / over-shoulder / POV close-up / back view / side profile / wide environmental shot], [scene matching current time and context], [subject doing something natural and authentic: walking, reading, stretching, laughing, looking out window, eating, resting, dancing, applying makeup, reaching toward camera, lying down gazing up, looking over shoulder, etc.], wearing [outfit appropriate for the situation], [any framing: full body / three-quarter / half body / close-up / extreme close-up / wide shot], [lighting physically plausible for the scene], natural unposed moment as if captured by a loving partner nearby, authentic intimate candid snapshot style",
 };
 
+// Time period mapping for SKILL.md sections
+const TIME_PERIOD_MAPPING: Record<string, string> = {
+  morning: "Morning",
+  work_morning: "Work Morning",
+  lunch: "Lunch",
+  work_afternoon: "Work Afternoon",
+  evening: "Evening",
+  night: "Night",
+  latenight: "Late Night",
+  deepnight: "Deep Night",
+};
+
+interface Pose {
+  name: string;
+  description: string;
+}
+
+/**
+ * Parse SKILL.md to extract poses for a specific time period
+ */
+async function parsePosesFromSkill(skillPath: string, timePeriod: string): Promise<Pose[]> {
+  try {
+    const content = await fs.readFile(skillPath, "utf-8");
+    const periodName = TIME_PERIOD_MAPPING[timePeriod] || timePeriod;
+    
+    // Find the section for this time period
+    // Pattern: ### Morning (06:00-08:30) or ### Work Morning (08:30-12:00) — Office Scenes
+    const sectionRegex = new RegExp(`### ${periodName}[^\\n]*\\n([\\s\\S]*?)(?=\\n### |\\n## |$)`, "i");
+    const match = content.match(sectionRegex);
+    
+    if (!match) {
+      return [];
+    }
+    
+    const sectionContent = match[1];
+    const poses: Pose[] = [];
+    
+    // Extract poses: - **Pose Name**: Description
+    const poseRegex = /- \*\*([^*]+)\*\*:\s*([^\n]+)/g;
+    let poseMatch;
+    
+    while ((poseMatch = poseRegex.exec(sectionContent)) !== null) {
+      poses.push({
+        name: poseMatch[1].trim(),
+        description: poseMatch[2].trim(),
+      });
+    }
+    
+    return poses;
+  } catch (error) {
+    // If SKILL.md doesn't exist or can't be parsed, return empty array
+    return [];
+  }
+}
+
+/**
+ * Randomly select a pose from the list
+ */
+function selectRandomPose(poses: Pose[]): Pose | undefined {
+  if (poses.length === 0) {
+    return undefined;
+  }
+  const randomIndex = Math.floor(Math.random() * poses.length);
+  return poses[randomIndex];
+}
+
 export async function prepareSelfie(options: PrepareSelfieOptions): Promise<PrepareResult> {
   const { mode, config, cwd, now = new Date() } = options;
 
@@ -104,7 +177,21 @@ export async function prepareSelfie(options: PrepareSelfieOptions): Promise<Prep
     resolvedOutfit = outfitOptions[Math.floor(Math.random() * outfitOptions.length)] as string;
   }
 
-  return {
+  // Try to load and parse SKILL.md to get poses for current time period
+  let selectedPose: Pose | undefined;
+  try {
+    // SKILL.md is deployed to skills/clawmate-companion/SKILL.md
+    // characterRoot points to: .../skills/clawmate-companion/assets/characters
+    // So SKILL.md is at: .../skills/clawmate-companion/SKILL.md
+    const skillPath = path.join(config.characterRoot, "..", "..", "SKILL.md");
+    const poses = await parsePosesFromSkill(skillPath, timeState.key);
+    selectedPose = selectRandomPose(poses);
+  } catch (error) {
+    // If SKILL.md parsing fails, continue without a selected pose
+    selectedPose = undefined;
+  }
+
+  const result: PrepareResult = {
     timeContext: {
       period: timeState.key,
       recommendedScene: timeState.state.scene ?? "",
@@ -122,4 +209,11 @@ export async function prepareSelfie(options: PrepareSelfieOptions): Promise<Prep
       example: MODE_EXAMPLES[mode],
     },
   };
+
+  // Add selected pose if available
+  if (selectedPose) {
+    result.selectedPose = selectedPose;
+  }
+
+  return result;
 }

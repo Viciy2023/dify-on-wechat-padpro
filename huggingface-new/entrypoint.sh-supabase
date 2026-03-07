@@ -61,8 +61,10 @@ if [ -n "$DEPLOY_FILES_BASE_URL" ] && [ -n "$SUPABASE_ANON_KEY" ]; then
   download_file "patches/clawmate/types.ts" "/root/.openclaw/extensions/clawmate-companion/src/core/types.ts" || ((FAIL_COUNT++))
   download_file "patches/clawmate/prepare.ts" "/root/.openclaw/extensions/clawmate-companion/src/core/prepare.ts" || ((FAIL_COUNT++))
   download_file "patches/clawmate/plugin.ts" "/root/.openclaw/extensions/clawmate-companion/src/plugin.ts" || ((FAIL_COUNT++))
+  download_file "patches/clawmate/video-pipeline.ts" "/root/.openclaw/extensions/clawmate-companion/src/video-pipeline.ts" || ((FAIL_COUNT++))
   download_file "patches/clawmate/SKILL.md" "/root/.openclaw/extensions/clawmate-companion/skills/clawmate-companion/SKILL.md" || ((FAIL_COUNT++))
   download_file "patches/clawmate/SKILL.zh.md" "/root/.openclaw/extensions/clawmate-companion/skills/clawmate-companion/SKILL.zh.md" || ((FAIL_COUNT++))
+  download_file "patches/clawmate/openclaw.plugin.json" "/root/.openclaw/extensions/clawmate-companion/openclaw.plugin.json" || ((FAIL_COUNT++))
 
   echo "=== Deploy files download complete (failures: $FAIL_COUNT) ==="
 
@@ -105,6 +107,8 @@ sed -i "s|__HFOPKUAKE_GROK2API_KEY__|${HFOPKUAKE_GROK2API_KEY}|g" "$CONFIG"
 sed -i "s|__HFOPKUAKE_GROK2API_BASE_URL__|${HFOPKUAKE_GROK2API_BASE_URL}|g" "$CONFIG"
 sed -i "s|__HFOPSOUGOU_GROK2API_KEY__|${HFOPSOUGOU_GROK2API_KEY}|g" "$CONFIG"
 sed -i "s|__HFOPSOUGOU_GROK2API_BASE_URL__|${HFOPSOUGOU_GROK2API_BASE_URL}|g" "$CONFIG"
+sed -i "s|__HFOPVIDEOSOUGOU_GROK_API_KEY__|${HFOPVIDEOSOUGOU_GROK_API_KEY}|g" "$CONFIG"
+sed -i "s|__HFOPVIDEOSOUGOU_GROK_BASE_URL__|${HFOPVIDEOSOUGOU_GROK_BASE_URL}|g" "$CONFIG"
 
 # Fix config file permission (suppress security audit warning)
 chmod 600 "$CONFIG"

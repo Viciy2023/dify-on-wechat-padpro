@@ -6,7 +6,7 @@ export interface TimeStateDefinition {
   [key: string]: unknown;
 }
 
-export type SelfieMode = "mirror" | "direct";
+export type SelfieMode = "mirror" | "direct" | "boyfriend";
 
 export interface CharacterMeta {
   id?: string;
@@ -51,6 +51,7 @@ export interface ClawMateConfig {
   characterRoot: string;
   userCharacterRoot: string;
   defaultProvider: string;
+  videoProvider?: string;
   fallback: FallbackPolicy;
   retry: RetryPolicy;
   pollIntervalMs: number;

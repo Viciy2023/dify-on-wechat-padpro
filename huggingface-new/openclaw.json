@@ -135,6 +135,13 @@
               "headers": {
                 "x-proxy-token": "__VOLCENGINE_PROXY_TOKEN__"
               }
+            },
+            "grokvideosougou": {
+              "type": "openai-compatible",
+              "apiKey": "__HFOPVIDEOSOUGOU_GROK_API_KEY__",
+              "model": "grok-imagine-1.0-video",
+              "baseUrl": "__HFOPVIDEOSOUGOU_GROK_BASE_URL__",
+              "timeoutMs": 300000
             }
           },
           "proactiveSelfie": {
@@ -142,6 +149,7 @@
             "probability": 0.5
           },
           "fallback": { "enabled": true, "order": ["groksougou","grokqq", "grokcf","grokkuake", "volcengine"] },
+          "videoProvider": "grokvideosougou",
           "retry": { "maxAttempts": 4, "backoffMs": 1500 }
         }
       }

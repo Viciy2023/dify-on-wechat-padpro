@@ -51,6 +51,7 @@ export interface ClawMateConfig {
   characterRoot: string;
   userCharacterRoot: string;
   defaultProvider: string;
+  videoProvider?: string;
   fallback: FallbackPolicy;
   retry: RetryPolicy;
   pollIntervalMs: number;
