@@ -1,0 +1,124 @@
+# ============================================================
+# Dockerfile-prebuilt - 用于 GitHub Actions 预构建基础镜像
+# 包含：OpenClaw + ClawMate + openclaw-china + 所有系统依赖
+# 不包含：自定义补丁、角色资源、配置文件（运行时下载）
+# ============================================================
+
+# ============================================================
+# Stage 1: Build Stage
+# ============================================================
+FROM node:22-bookworm AS build
+
+# 1. 安装 Bun（构建工具）
+RUN curl -fsSL https://bun.sh/install | bash
+ENV PATH="/root/.bun/bin:${PATH}"
+
+# 2. 启用 corepack（pnpm 管理器）
+RUN corepack enable
+
+WORKDIR /app
+
+# 3. 克隆 OpenClaw 官方代码
+RUN git clone --depth 1 https://github.com/openclaw/openclaw.git .
+
+# 4. 安装依赖（最耗时：~15分钟）
+RUN pnpm install --no-frozen-lockfile
+
+# 5. 构建项目（最耗时：~20分钟）
+ENV OPENCLAW_A2UI_SKIP_MISSING=1
+RUN pnpm build
+
+# 6. 构建 Control UI（耗时：~5分钟）
+ENV OPENCLAW_PREFER_PNPM=1
+RUN pnpm ui:build
+
+# 7. 安装 ClawMate 基础插件（耗时：~2分钟）
+RUN git clone --depth 1 https://github.com/BytePioneer-AI/clawmate.git /tmp/clawmate \
+    && mkdir -p /root/.openclaw/extensions \
+    && cp -r /tmp/clawmate/packages/clawmate-companion /root/.openclaw/extensions/clawmate-companion \
+    && cd /root/.openclaw/extensions/clawmate-companion \
+    && npm install --omit=dev --no-audit --no-fund \
+    && rm -rf /tmp/clawmate
+
+# 8. 安装 openclaw-china 插件（使用官方版本）
+RUN node openclaw.mjs plugins install @openclaw-china/channels || echo "openclaw-china plugin install attempted"
+
+# ============================================================
+# Stage 2: Runtime Stage
+# ============================================================
+FROM node:22-bookworm
+
+WORKDIR /app
+
+# 9. 安装 Chromium 和所有依赖（耗时：~5分钟，体积大）
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    procps hostname curl git openssl chromium \
+    libxcb-shm0 libx11-xcb1 libx11-6 libxcb1 libxext6 libxrandr2 \
+    libxcomposite1 libxcursor1 libxdamage1 libxfixes3 libxi6 libgtk-3-0 \
+    libpangocairo-1.0-0 libpango-1.0-0 libatk1.0-0 libcairo-gobject2 \
+    libcairo2 libgdk-pixbuf-2.0-0 libxrender1 libasound2 libfreetype6 \
+    libfontconfig1 libdbus-1-3 libnss3 libnspr4 libatk-bridge2.0-0 \
+    libdrm2 libxkbcommon0 libatspi2.0-0 libcups2 libxshmfence1 libgbm1 && \
+    rm -rf /var/lib/apt/lists/*
+
+# 10. 设置时区为北京时间
+ENV TZ=Asia/Shanghai
+RUN ln -snf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    echo "Asia/Shanghai" > /etc/timezone
+
+# 11. 从构建阶段复制所有必要文件
+COPY --from=build --chown=node:node /app/dist ./dist
+COPY --from=build --chown=node:node /app/node_modules ./node_modules
+COPY --from=build --chown=node:node /app/package.json .
+COPY --from=build --chown=node:node /app/openclaw.mjs .
+COPY --from=build --chown=node:node /app/extensions ./extensions
+COPY --from=build --chown=node:node /app/skills ./skills
+COPY --from=build --chown=node:node /app/docs ./docs
+COPY --from=build --chown=node:node /root/.openclaw /root/.openclaw
+
+# 12. 激活 corepack（确保 pnpm 可用）
+RUN corepack enable && \
+    corepack prepare "$(node -p "require('./package.json').packageManager")" --activate
+
+# 13. 安装 agent-browser 全局包（耗时：~2分钟）
+RUN npm install -g agent-browser@latest
+
+# 14. 安装 Playwright 全局包（耗时：~3分钟）
+RUN npm install -g playwright
+
+# 15. 设置 Playwright 环境变量
+ENV PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium
+ENV PLAYWRIGHT_BROWSERS_PATH=/root/.cache/ms-playwright
+
+# 16. 安装 agent-browser skill from ClawHub（耗时：~2分钟）
+RUN npx -y clawhub@latest install agent-browser --force || echo "agent-browser skill install attempted"
+
+# 17. 创建必要的目录结构（运行时补丁会覆盖这些目录）
+RUN mkdir -p /root/.openclaw/extensions/clawmate-companion/src/core \
+    && mkdir -p /root/.openclaw/extensions/clawmate-companion/skills/clawmate-companion/assets/characters/maggie/images \
+    && mkdir -p /root/.openclaw/workspace/memory \
+    && mkdir -p /root/.openclaw/cron \
+    && chmod -R 755 /root/.openclaw
+
+# 18. 创建 openclaw CLI 全局命令
+RUN printf '#!/bin/sh\nexec node /app/openclaw.mjs "$@"\n' > /usr/local/bin/openclaw && \
+    chmod +x /usr/local/bin/openclaw
+
+# 19. 设置生产环境
+ENV NODE_ENV=production
+
+# 20. 暴露端口
+# 18789: OpenClaw 默认端口
+# 7860: HuggingFace Spaces 要求的端口
+EXPOSE 18789 7860
+
+# 21. 健康检查
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+  CMD curl -f http://localhost:7860/ || curl -f http://localhost:18789/healthz || exit 1
+
+# 22. 切换到 node 用户（安全性）
+USER node
+
+# 23. 默认启动命令（HF 会通过 entrypoint.sh 覆盖）
+CMD ["node", "openclaw.mjs", "gateway", "--allow-unconfigured"]

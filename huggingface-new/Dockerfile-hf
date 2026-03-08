@@ -1,0 +1,20 @@
+# ============================================================
+# Dockerfile-hf - HuggingFace Spaces 使用的 Dockerfile
+# 基于预构建镜像，只添加 entrypoint.sh
+# ============================================================
+
+# 使用预构建的基础镜像
+FROM viciy2023/openclaw-clawmate:latest
+
+# 切换到 root 用户（需要下载文件和修改权限）
+USER root
+
+# 复制 entrypoint.sh
+COPY entrypoint.sh-supabase /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# 暴露端口
+EXPOSE 18789 7860
+
+# 使用 entrypoint.sh 启动
+ENTRYPOINT ["/entrypoint.sh"]
